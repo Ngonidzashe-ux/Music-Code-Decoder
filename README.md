@@ -1,80 +1,80 @@
-Music Code Decoder
-================
-**Music Code Decoder** is a hardware-based signal processing project implemented on a Digilent Basys 3 FPGA board using VHDL. It decodes ASCII messages embedded in audio signals by analyzing waveforms through an Analog-to-Digital Converter (ADC), a symbol detector, and a UART interface. This project was developed as part of ELEC3342 coursework at The University of Hong Kong, building on a provided Vivado template to integrate and enhance custom modules for robust audio decoding in noisy environments.
+# Music Code Decoder
 
-## Project Overview
+**Music Code Decoder** is a hardware-based signal processing project implemented on a **Digilent Basys 3 FPGA board** using **VHDL**. It decodes **ASCII messages embedded in audio signals** by analyzing waveforms through an **Analog-to-Digital Converter (ADC), a symbol detector, and a UART interface**. This project was developed for **ELEC3342** coursework at **The University of Hong Kong**, enhancing a provided **Vivado template** with custom modules to improve **audio decoding accuracy in noisy environments**.
 
-The system captures audio input (e.g., via a Pmod MIC3 microphone), processes it through an ADC, decodes symbols from the waveform, translates them into ASCII characters, and outputs the result serially via UART. Key challenges include improving symbol detection accuracy under noisy conditions, leveraging a 12.288 MHz clock and a 96 kHz derived clock for timing precision.
-
+## 🎵 Project Overview
 - **Audio-to-ASCII Decoding**: Extracts ASCII messages (e.g., "ENJOY FLATWHITE!") from music-encoded waveforms.
-- **Noise-Resilient Symbol Detection**: Enhanced symbol detector filters high-frequency noise for reliable frequency analysis.
-- **Hardware Integration**: Interfaces with ADCS7476 ADC and Pmod MIC3 on Basys 3 FPGA.
-- **UART Output**: Transmits decoded messages serially for display or further processing
+- **Noise-Resilient Symbol Detection**: Enhances detection reliability by filtering **high-frequency noise**.
+- **Hardware Integration**: Interfaces with **ADCS7476 ADC** and **Pmod MIC3** on the **Basys 3 FPGA**.
+- **UART Output**: Transmits decoded messages serially for external display or further processing.
 
-The project source file hierarchy
-=================================
-
-/src
 ---
+## 📁 Project Structure
+```plaintext
+MusicCodeDecoder/
+├── src/    # Custom VHDL modules
+│   ├── adccntrl.vhd      # ADC driver module (provided, unmodified)
+│   ├── clk_div.vhd       # Clock divider generating 96 kHz clock (provided, unmodified)
+│   ├── mcdecoder.vhd     # Custom ASCII decoder
+│   ├── myuart.vhd        # Custom UART transmitter
+│   ├── sim_top.vhd       # Simulation module with noisy ADC input
+│   ├── symb_det.vhd      # Enhanced symbol detector
+│   ├── sys_top.vhd       # Top-level design (modified for integration)
+├── ip/     # Xilinx IP cores (pre-configured)
+├── prj/    # Vivado project files
+├── rtl/    # RTL design files (VHDL source)
+├── tb/     # Testbench files (VHDL & scripts)
+│   ├── audio_gen.py      # Generates .wav audio for testing
+│   ├── info_wave_gen.py  # Generates input waveforms for simulation
+│   ├── sim_top_tb.vhd    # Testbench for noisy signal handling
+├── xdc/    # Constraint files for Basys 3 board
+└── README.md             # Project documentation
+```
 
-This folder contains all the source files that I worked on
-- **`adccntrl.vhd`**: ADC driver module interfacing with the ADCS7476 to sample audio input at 96 kHz (provided in template, no modifications needed).
-- **`clk_div.vhd`**: Clock divider generating a 96 kHz clock (`clk`) from the 12.288 MHz clock (`clk_12288k`) for ADC synchronization (provided, do not modify).
-- **`mcdecoder.vhd`**: Custom module decoding ASCII characters from music code symbols extracted by the symbol detector.
-- **`myuart.vhd`**: Custom UART transmitter converting parallel ASCII data into a serial output stream for external display.
-- **`sim_top.vhd`**: Simulation top module with noisy ADC input (sine wave mixed with high-frequency noise) for testing symbol detection (provided).
-- **`symb_det.vhd`**: Custom symbol detector decoding audio symbols from ADC output, enhanced to handle noise beyond simple zero-crossing.
-- **`sys_top.vhd`**: Top-level design integrating all modules, partially provided and modified to connect custom `symb_det`, `mcdecoder`, and `myuart`.
-
-
-/ip
 ---
+## 🏗 Implementation Details
+### **1️⃣ Symbol Detection & ASCII Decoding**
+- Captures audio input via **Pmod MIC3**, processed by **ADCS7476 ADC**.
+- Decodes embedded symbols from **waveform zero-crossings and frequency content**.
+- Translates detected symbols into **ASCII characters** using `mcdecoder.vhd`.
 
-Including all the Xilinx IP we need in this project. **No need to modify it**
+### **2️⃣ Noise-Resilient Processing**
+- Improved `symb_det.vhd` to **filter high-frequency noise** for reliable detection.
+- Simulation (`sim_top.vhd`) tests performance under **noisy conditions**.
 
-A clock wizard IP is already instantiated to divide the 100 MHz system clock ```clk_100m``` from the onboard oscillator to a 12.288 MHz clock ```clk_12288k```. The divided clock it is used to drive the ADC controller ```adccntrl```.
+### **3️⃣ UART Serial Output**
+- Uses `myuart.vhd` to transmit decoded ASCII characters **for real-time monitoring**.
+- Works with external **serial display or data logging system**.
 
-/prj
-----
-
-The project xpr file is under /prj.
-
-/rtl
-----
-
-This folder includes all the rtl files (VHDL) of this project.
-
-*   `clk_div.vhd` -- Generate 96kHz clock ```clk``` from ```clk_12288k``` **(Do not modify)**
-*   `adccntrl.vhd` -- ADC driver **(Do not modify)**
-*   `symb_det.vhd` – Decode symbols from ADC output
-*   `mcdecoder.vhd` -- Decode ASCII code from music code symbol
-*   `myuart.vhd` – UART - parallel to serial output
-*   `sys_top.vhd` -- System top of this project **(We provide part of it, you may need to modify)**
-*   `sim_top.vhd` -- **Only for simulation.** We provide the real ADC input in which the sine wave is no longer pure but with a mix of higher-frequency noises. You should modify your previously designed symbol detector so it can detect correctly!
-
-/tb
 ---
+## 🚀 Setup & Usage
+### **1️⃣ Clone Repository**
+```bash
+git clone https://github.com/Ngonidzashe-ux/MusicCodeDecoder.git
+cd MusicCodeDecoder
+```
+### **2️⃣ Open Vivado Project**
+```bash
+vivado -source prj/music_code_decoder.xpr
+```
+### **3️⃣ Simulate & Synthesize**
+- **Run Simulation**: Test symbol detection in noisy conditions.
+- **Synthesize & Implement**: Generate bitstream for Basys 3 FPGA.
 
-This folder is used for testbench (vhdl) and data files (input waves and scripts). To use them, please refer to the scripts to check the arguments in detail.
+### **4️⃣ Hardware Testing**
+- Connect **Pmod MIC3** to Basys 3 FPGA.
+- Program FPGA & monitor UART output.
 
-*   `audio_gen.py` – Generate audio file (.wav) when you are ready to test on board and real ADC.
-*   `info_wave_gen.py` – Generate input waves file based on your “information” (a string), which can be used for simulation as the input of symbol detector.
-*   `audio_waves.wav` -- We provide an audio file to you, which is for “ENJOY FLATWHITE!” demo. It is generated by `audio_gen.py`
-*   `info_wave.txt` -- Waveform with noise mixed. It has been added to the project so you do not need to re-add it. It is generated by `info_wave_gen.py`
-*   `sim_top_tb.vhd` -- We provide the real ADC input in which the sine wave is no longer pure but with a mix of higher-frequency noises. You should modify your previously designed symbol detector so it can detect correctly!
+---
+## 📜 References
+- **[Digilent Basys 3](https://digilent.com/reference/_media/basys3:basys3_rm.pdf)**
+- **[Digilent PMOD MIC3](https://digilent.com/reference/_media/reference/pmod/pmodmic3/pmodmic3_rm.pdf)**
+- **[ADCS7476 Datasheet](https://www.ti.com/lit/ds/symlink/adcs7476.pdf)**
 
-/xdc
-----
+## 📝 License
+MIT License — Free to use and modify.
 
-This folder is used for constraint files (xdc). **Please refer to digilent Basys 3 board reference if you want to connect your microphone.**
+## 👤 About the Author
+Developed by **Ngonidzashe Maposa**, a Computer Engineering student at **The University of Hong Kong**. Passionate about **hardware acceleration, signal processing, and FPGA development**.
 
-References
-==========
-
-*   [Digilent Basys 3](https://digilent.com/reference/_media/basys3:basys3_rm.pdf)
-*   [Digilent PMOD MIC 3](https://digilent.com/reference/_media/reference/pmod/pmodmic3/pmodmic3_rm.pdf)
-*   [ADCS7476](https://www.ti.com/lit/ds/symlink/adcs7476.pdf)
-*   [Setting up Vivado to use VHDL-2008 if you need](https://docs.xilinx.com/r/en-US/ug901-vivado-synthesis/Setting-up-Vivado-to-use-VHDL-2008)
-=======
-# Music-Code-Decoder
->>>>>>> bf9e198e3ac6cf5188df23d0b6737e0d9f39bd40
+🔗 **Connect with me:** [LinkedIn](#) | [GitHub](https://github.com/Ngonidzashe-ux)
