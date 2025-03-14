@@ -14,6 +14,19 @@ The system captures audio input (e.g., via a Pmod MIC3 microphone), processes it
 The project source file hierarchy
 =================================
 
+/src
+---
+
+This folder contains all the source files that I worked on
+- **`adccntrl.vhd`**: ADC driver module interfacing with the ADCS7476 to sample audio input at 96 kHz (provided in template, no modifications needed).
+- **`clk_div.vhd`**: Clock divider generating a 96 kHz clock (`clk`) from the 12.288 MHz clock (`clk_12288k`) for ADC synchronization (provided, do not modify).
+- **`mcdecoder.vhd`**: Custom module decoding ASCII characters from music code symbols extracted by the symbol detector.
+- **`myuart.vhd`**: Custom UART transmitter converting parallel ASCII data into a serial output stream for external display.
+- **`sim_top.vhd`**: Simulation top module with noisy ADC input (sine wave mixed with high-frequency noise) for testing symbol detection (provided).
+- **`symb_det.vhd`**: Custom symbol detector decoding audio symbols from ADC output, enhanced to handle noise beyond simple zero-crossing.
+- **`sys_top.vhd`**: Top-level design integrating all modules, partially provided and modified to connect custom `symb_det`, `mcdecoder`, and `myuart`.
+
+
 /ip
 ---
 
@@ -54,10 +67,6 @@ This folder is used for testbench (vhdl) and data files (input waves and scripts
 ----
 
 This folder is used for constraint files (xdc). **Please refer to digilent Basys 3 board reference if you want to connect your microphone.**
-
-/src
-===============
-
 
 References
 ==========
