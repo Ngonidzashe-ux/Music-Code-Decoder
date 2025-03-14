@@ -1,10 +1,15 @@
-<<<<<<< HEAD
-Project Template
+Music Code Decoder
 ================
+**Music Code Decoder** is a hardware-based signal processing project implemented on a Digilent Basys 3 FPGA board using VHDL. It decodes ASCII messages embedded in audio signals by analyzing waveforms through an Analog-to-Digital Converter (ADC), a symbol detector, and a UART interface. This project was developed as part of ELEC3342 coursework at The University of Hong Kong, building on a provided Vivado template to integrate and enhance custom modules for robust audio decoding in noisy environments.
 
-We have posted a template Vivado project for HW4 on the course website. Here is an introduction of the template project
+## Project Overview
 
-In the provided template project we have set up the clock generator, ADC controller, and part of the top design for you. Based on the provided template, you need to move your previously designed modules (music code decoder, symbol detector, UART) into this project.
+The system captures audio input (e.g., via a Pmod MIC3 microphone), processes it through an ADC, decodes symbols from the waveform, translates them into ASCII characters, and outputs the result serially via UART. Key challenges include improving symbol detection accuracy under noisy conditions, leveraging a 12.288 MHz clock and a 96 kHz derived clock for timing precision.
+
+- **Audio-to-ASCII Decoding**: Extracts ASCII messages (e.g., "ENJOY FLATWHITE!") from music-encoded waveforms.
+- **Noise-Resilient Symbol Detection**: Enhanced symbol detector filters high-frequency noise for reliable frequency analysis.
+- **Hardware Integration**: Interfaces with ADCS7476 ADC and Pmod MIC3 on Basys 3 FPGA.
+- **UART Output**: Transmits decoded messages serially for display or further processing
 
 The project source file hierarchy
 =================================
@@ -50,17 +55,9 @@ This folder is used for testbench (vhdl) and data files (input waves and scripts
 
 This folder is used for constraint files (xdc). **Please refer to digilent Basys 3 board reference if you want to connect your microphone.**
 
-TODO
+/src
 ===============
 
-*   Improve your symbol detector to work with noise (_Hint:_ counting zero crossing alone cannot determine the frequency from the audio reliablily as the ADC value may skew from pos->neg, neg->pos several times around a crossing point. Any noise filtering you can use?)
-
-    ![Screenshot_2022-11-15_at_5.31.34_PM.pngNaN](https://cdn-uploads.piazza.com/paste/l7gzu9s26e04qe/905cdd19c54e4386504fbf06587ba99e0833f4e65b6a1edd5de996f4c75404a4/Screenshot_2022-11-15_at_5.31.34_PM.png)
-
-*   Do not change the interface port names because we have provided the testbench for you.
-*   After capstone 1 is accomplished. Connect the microphone module to the upper row of port JA. Please refer to the [Basys 3 board reference manual](https://digilent.com/reference/programmable-logic/basys-3/reference-manual?srsltid=AfmBOopyJ9j6mA28p0PlrYDbfFLm7RuB9wxHMMygnvBFHtUREZJxdfho) and the xdc file, to make sense of how physical pins are assigned. You can also refer to the figure below:
-    
-*   If you are good at Python and want to explore some extensions for different massages, you can use the `audio_gen.py`
 
 References
 ==========
